@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<head id="head">
+	<script type="text/javascript" src="{% static 'cal/Extensible-config.js' %}"></script>
+	<script type="text/javascript" src="{% static 'cal/jquery-2.0.3.js' %}"></script>
+	<title>Calendar</title>
+</head>
+
+<body>
+ 	<div id="holder">
+ 		<input type="text" class="textInput" name="uname" id="uname" placeholder="New User Name">
+		<input type="password" class="textInput" name="password" id="password" placeholder="New Password">	
+		<input type="submit" value="Submit" id="submit">
+		<h3 id="failed"> </h3>
+	</div>
+	
+	<script type="text/javascript" id="toChange"></script>
+<div id="calbox" style="width:600px; height:400px;"></div>
+<span id="app-msg" class="x-hidden"></span>
+
+</body>
+</html>
+
+<script type="text/javascript">
+
+document.getElementById("submit").addEventListener("click", loginAjax, false);
+function loginAjax(){
+	var uname = document.getElementById('uname').value;
+	var pass = document.getElementById('password').value;
+    data = {
+        "username": uname,
+        "password": pass
+     };
+     $.ajax({
+     	type: "POST",
+        url: "http://localhost:8000/api/v1/user/login/",
+		data: data,
+        success: function(data) {useCal();},
+        error: function (rs, e) {loginFailed()}
+    });
+}
+
+function useCal(){
+	var s = document.createElement("script");
+	s.type = "text/javascript";
+	s.src = "{% static 'cal/app.js' %}";
+	$("head").append(s);
+	document.getElementById("holder").innerHTML = "";
+}
+
+function loginFailed(){
+	document.getElementById("failed").textContent = "Login Failed. Please try a different user name or password";
+}
+</script>
